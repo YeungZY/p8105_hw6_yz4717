@@ -26,5 +26,13 @@ weather_df =
   select(name, id, everything())
 ```
 
-
+```{r building_model_q2}
+weather_data_df =
+  weather_df |> 
+  modelr::bootstrap(n = 5000) |> 
+  mutate(
+    modeling = map(strap, \(df) lm(tmax ~ tmin + prcp, data = df)),
+    mapping = map(modeling, broom::glance),
+    result = map(modeling, broom::tidy)) 
+```
 
