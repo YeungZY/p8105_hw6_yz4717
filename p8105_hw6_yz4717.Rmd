@@ -12,7 +12,7 @@ library(modelr)
 
 # Problem 1
 
-data cleaning
+## data cleaning
 ```{r}
 homicide= 
   read_csv("data/homicide-data.csv") |>
@@ -33,14 +33,16 @@ homicide=
 ```
 
 
-Baltimore glm function
+## Baltimore glm function
+
 ```{r}
 baltimore_glm = 
   filter(homicide, city_state == "Baltimore, MD") |> 
   glm(solve_not ~ victim_age + victim_sex + victim_race, family = binomial(), data = _)
 ```
 
-estimate and confidence interval of the adjusted odds ratio
+## estimate and confidence interval of the adjusted odds ratio
+
 ```{r}
 baltimore_glm |> 
   broom::tidy() |> 
@@ -53,7 +55,8 @@ baltimore_glm |>
   knitr::kable(digits = 3)
 ```
 
-estimated ORs and CIs for each city.
+## Estimated ORs and CIs for each city.
+
 ```{r}
 all_cities = 
   homicide |>
@@ -76,7 +79,8 @@ all_cities |>
   knitr::kable(digits = 3)
 ```
 
-plot
+## Making plot
+
 ```{r}
 all_cities |> 
   mutate(city_state = fct_reorder(city_state, OR)) |> 
@@ -89,7 +93,7 @@ all_cities |>
 In most cities, male victims have smaller odds than female victims as the odds ratio is smaller than 1. In roughly half of these cities, confidence intervals are narrow and do not contain 1, suggesting a significant difference in resolution rates by sex after adjustment for victim age and race. 
 
 
-## Problem 2
+# Problem 2
 
 ```{r}
 weather_df = 
@@ -127,6 +131,8 @@ weather_q2_df =
 
 head(weather_q2_df)
 ```
+
+I use the `bootstrap` to perform resampling.And I conduct the linear regression modeling, and various data transformations on the given data set. And I use `mutate` to calculate the needed value in the question and `unnest` the result as well.
 
 Then, I would like to plot the r_squared distribution.
 
@@ -224,6 +230,7 @@ head(birthweight_df)
 
 ```
 
+First of all, I import the data into the environment and use the function `mutate` and `case_match` to update the value in the data. Then, I convert these variables into `factors`.
 
 ```{r building_linear_model}
 
@@ -237,6 +244,8 @@ lm_q3_original = lm(bwt ~ babysex + bhead + blength + delwt + fincome + gaweeks 
 summary(lm_q3_original)
 
 ```
+
+At first, I have used all the variables in the data set as predictors. Then, I reviewed the summary result and check the p-values of all predictors. As we known, to make the adjusted r-squared higher, I need to drop the insignificant variables in the original model. Repeat this step, until all predictors have a p-value less than 0.05.
 
 
 ```{r prediction_residual}
@@ -256,6 +265,9 @@ birthweight_df |>
        title = "The Plot of Birthweight Model")
 
 ```
+
+Most points gathered in the region of 2000-4000 fitted values and -1000-1000 residuals. These dots are gathered into a cluster. A small number of points are distributed far away from the cluster in the periphery of the cluster.
+
 
 ## Length at birth and gestational age
 
@@ -283,6 +295,7 @@ summary(lm_q3_2)
 
 ```
 
+
 ## Comparison
 
 ### Original Model
@@ -307,8 +320,10 @@ error_original = mean(errors_original_df)
 ## Model 1 & Model 2
 
 ```{r model1_model2}
+
 # model 1
-errors_model1_df = map2_dbl(
+errors_model1_df = 
+  map2_dbl(
   pull(cv_model,train),
   pull(cv_model,test), 
   ~{
@@ -319,7 +334,8 @@ errors_model1_df = map2_dbl(
 error_model1 = mean(errors_model1_df)
 
 # model 2
-errors_model2_df = map2_dbl(
+errors_model2_df = 
+  map2_dbl(
   pull(cv_model,train),
   pull(cv_model,test),  
   ~{
@@ -331,6 +347,8 @@ error_model2 = mean(errors_model2_df)
 
 ```
 
+We can use `crossv_mc` to split the data into k exclusive partitions and uses each partition for a test-training split. Then, I built three different models as requested in the question and computed their error.
+
 ```{r comparison}
 
 tibble(
@@ -341,4 +359,4 @@ tibble(
   knitr::kable()
 ```
 
-
+From the lessons we already have, we can know that Error can be used to compare different models. According to the given result, we can clearly see the optimized original model have the lowest Error while the other model perform badly.
