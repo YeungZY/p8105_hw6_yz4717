@@ -145,6 +145,7 @@ head(birthweight_df)
 
 ```
 
+
 ```{r building_linear_model}
 
 lm_q3 = lm(bwt ~ .,
@@ -154,6 +155,7 @@ summary(lm_q3)
 
 ```
 
+
 ```{r prediction_residual}
 
 birthweight_df |>
@@ -161,8 +163,8 @@ birthweight_df |>
   add_residuals(lm_q3) |>
   ggplot(aes(x = pred,
              y = resid)) +
-  geom_point(color = "black",
-             alpha = .5) +
+  geom_point(color = "grey",
+             alpha = .8) +
   geom_hline(yintercept = 0,
              linetype = "dashed",
              color = "blue") +
@@ -172,7 +174,45 @@ birthweight_df |>
 
 ```
 
-```{r}
+## Length at birth and gestational age
+
+```{r q3_model_1}
+
+set.seed(123)
+
+lm_q3_1 <- lm(bwt ~ blength + gaweeks,
+              data = birthweight_df)
+
+summary(lm_q3_1)
+
+```
+
+## Head circumference, length, sex, and all interactions
+
+```{r q3_model_2}
+
+lm_q3_2  =  
+  lm(bwt ~ bhead + blength + babysex + bhead * blength + bhead * babysex + blength * babysex, 
+     data = birthweight_df)
+summary(lm_q3_2)
+
+```
+
+## Original Model
+
+```{r original_model}
+
+cv_model = crossv_mc(birthweight_df, 100)
+
+errors = map2_dbl(
+  pull(cv_model,train),
+  pull(cv_model,test), 
+  ~{
+  model1_fit <- lm(bwt ~ ., data = .x)
+  rmse(model1_fit, .y)
+  })
+
+mean(errors)
 
 ```
 
