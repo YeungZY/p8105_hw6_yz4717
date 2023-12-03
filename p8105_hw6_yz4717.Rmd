@@ -51,10 +51,15 @@ head(weather_q2_df)
 
 Then, I would like to plot the r_squared distribution.
 
-```{r density_plot_r_2}
+```{r density_plot_r^2}
+
 weather_q2_df |>
   ggplot(aes(x = r.squared)) +
-  geom_density()
+  geom_density()+
+  labs(x = "R_Squared",
+       y = "Density",
+       title = "The Density Plot of R_squared")
+
 ```
 
 As can be seen from the above graph, the distribution is approximately normal, with the median of 0.917. 
@@ -62,7 +67,111 @@ As can be seen from the above graph, the distribution is approximately normal, w
 After that, I plot the distribution of ($log(\hat{\beta_1} * \hat{\beta_2})$)
 
 ```{r density_plot_log}
+
 weather_q2_df |>
   ggplot(aes(x = log_data)) +
-  geom_density()
+  geom_density()+
+  labs(x = "Log",
+       y = "Density",
+       title = "The Density Plot of Log Data")
+
 ```
+
+* Confidence interval of ${r^2}$ and $log(\hat{\beta_1} * \hat{\beta_2})$
+
+* Here comes the 95% CI of r_squared.
+
+```{r quantile_r_squared}
+
+quantile(
+  pull(weather_q2_df,
+       r.squared),
+  probs = c(.025, .975))
+
+```
+
+* Here comes the 95% CI of $log(\hat{\beta_1} * \hat{\beta_2})$ excluding `NULL` data.
+
+```{r quantile_log}
+
+quantile(
+  pull(weather_q2_df,
+       log_data),
+  probs = c(.025, .975),
+  na.rm = TRUE)
+
+```
+
+## Problem 3
+
+
+```{r import_data_q3}
+
+data_q3 =
+  read_csv('data/birthweight.csv', na = c("", "NA", "Unknown"))
+
+data_q3 =
+  data_q3 |>
+  mutate(
+    babysex = case_match(
+             babysex,
+             1 ~ "male",
+             2 ~ "female"),
+    frace = case_match(
+             frace,
+             1 ~ "White", 
+             2 ~ "Black", 
+             3 ~ "Asian", 
+             4 ~ "Puerto Rican", 
+             8 ~ "Other", 
+             9 ~ "Unknown"),
+    malform = case_match(
+             malform,
+             0 ~ "absent",
+             1 ~ "present"),
+    mrace = case_match(
+             mrace,
+             1 ~ "White", 
+             2 ~ "Black", 
+             3 ~ "Asian", 
+             4 ~ "Puerto Rican", 
+             8 ~ "Other"),
+    babysex = as.factor(babysex),
+    frace = as.factor(frace),
+    malform = as.factor(malform),
+    mrace = as.factor(mrace))
+
+head(data_q3)
+
+```
+
+```{r building_linear_model}
+
+lm_q3 = lm(bwt ~ .,
+           data = data_q3)
+
+summary(lm_q3)
+
+```
+
+```{r prediction_residual}
+
+data_q3 |>
+  add_predictions(lm_q3) |>
+  add_residuals(lm_q3) |>
+  ggplot(aes(x = pred,
+             y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0,
+             linetype = "dashed",
+             color = "green") +
+  labs(x = "Fitted",
+       y = "Residuals",
+       title = "The Plot of Birthweight Model")
+
+```
+
+```{r}
+
+```
+
