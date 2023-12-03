@@ -153,6 +153,10 @@ lm_q3 = lm(bwt ~ .,
 
 summary(lm_q3)
 
+lm_q3_original = lm(bwt ~ babysex + bhead + blength + delwt + fincome + gaweeks +mheight + momage + parity + ppwt + smoken, data = birthweight_df)
+
+summary(lm_q3_original)
+
 ```
 
 
@@ -168,7 +172,7 @@ birthweight_df |>
   geom_hline(yintercept = 0,
              linetype = "dashed",
              color = "blue") +
-  labs(x = "Fitted",
+  labs(x = "Fitted Values",
        y = "Residuals",
        title = "The Plot of Birthweight Model")
 
@@ -180,7 +184,8 @@ birthweight_df |>
 
 set.seed(123)
 
-lm_q3_1 <- lm(bwt ~ blength + gaweeks,
+lm_q3_1 = 
+  lm(bwt ~ blength + gaweeks,
               data = birthweight_df)
 
 summary(lm_q3_1)
@@ -192,7 +197,7 @@ summary(lm_q3_1)
 ```{r q3_model_2}
 
 lm_q3_2  =  
-  lm(bwt ~ bhead + blength + babysex + bhead * blength + bhead * babysex + blength * babysex, 
+  lm(bwt ~ babysex + blength + bhead + + bhead * blength + bhead * babysex + blength * babysex, 
      data = birthweight_df)
 summary(lm_q3_2)
 
@@ -208,11 +213,41 @@ errors = map2_dbl(
   pull(cv_model,train),
   pull(cv_model,test), 
   ~{
-  model1_fit <- lm(bwt ~ ., data = .x)
+  model1_fit = lm(bwt ~ babysex + bhead + blength + delwt + fincome + gaweeks + mheight + momage + parity + ppwt + smoken,
+                  data = birthweight_df)
   rmse(model1_fit, .y)
   })
 
 mean(errors)
 
 ```
+
+## Model 1 & Model 2
+
+```{r model1_model2}
+# model 1
+errors = map2_dbl(
+  pull(cv_model,train),
+  pull(cv_model,test), 
+  ~{
+  model1_fit = lm(bwt ~ blength + gaweeks, data = .x)
+  rmse(model1_fit, .y)
+  })
+
+mean(errors)
+
+# model 2
+errors = map2_dbl(
+  pull(cv_model,train),
+  pull(cv_model,test),  
+  ~{
+  model2_fit = lm(bwt ~ bhead + blength + babysex + bhead * blength + bhead * babysex + blength * babysex, data = .x)
+  rmse(model2_fit, .y)
+})
+
+mean(errors)
+
+```
+
+
 
