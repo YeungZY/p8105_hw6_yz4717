@@ -107,11 +107,11 @@ quantile(
 
 ```{r import_data_q3}
 
-data_q3 =
+birthweight_df =
   read_csv('data/birthweight.csv', na = c("", "NA", "Unknown"))
 
-data_q3 =
-  data_q3 |>
+birthweight_df =
+  birthweight_df |>
   mutate(
     babysex = case_match(
              babysex,
@@ -141,14 +141,14 @@ data_q3 =
     malform = as.factor(malform),
     mrace = as.factor(mrace))
 
-head(data_q3)
+head(birthweight_df)
 
 ```
 
 ```{r building_linear_model}
 
 lm_q3 = lm(bwt ~ .,
-           data = data_q3)
+           data = birthweight_df)
 
 summary(lm_q3)
 
@@ -156,15 +156,16 @@ summary(lm_q3)
 
 ```{r prediction_residual}
 
-data_q3 |>
+birthweight_df |>
   add_predictions(lm_q3) |>
   add_residuals(lm_q3) |>
   ggplot(aes(x = pred,
              y = resid)) +
-  geom_point() +
+  geom_point(color = "black",
+             alpha = .5) +
   geom_hline(yintercept = 0,
              linetype = "dashed",
-             color = "green") +
+             color = "blue") +
   labs(x = "Fitted",
        y = "Residuals",
        title = "The Plot of Birthweight Model")
