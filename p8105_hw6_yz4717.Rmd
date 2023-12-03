@@ -12,7 +12,7 @@ library(modelr)
 
 # Problem 1
 
-## data cleaning
+## Data cleaning
 ```{r}
 homicide= 
   read_csv("data/homicide-data.csv") |>
@@ -41,7 +41,7 @@ baltimore_glm =
   glm(solve_not ~ victim_age + victim_sex + victim_race, family = binomial(), data = _)
 ```
 
-## estimate and confidence interval of the adjusted odds ratio
+## Estimate and confidence interval of the adjusted odds ratio
 
 ```{r}
 baltimore_glm |> 
@@ -95,6 +95,7 @@ In most cities, male victims have smaller odds than female victims as the odds r
 
 # Problem 2
 
+## Import data in Q2
 ```{r}
 weather_df = 
   rnoaa::meteo_pull_monitors(
@@ -108,6 +109,7 @@ weather_df =
     tmax = tmax / 10) |>
   select(name, id, everything())
 ```
+## Building models
 
 ```{r building_model_q2}
 weather_q2_df =
@@ -133,6 +135,8 @@ head(weather_q2_df)
 ```
 
 I use the `bootstrap` to perform resampling.And I conduct the linear regression modeling, and various data transformations on the given data set. And I use `mutate` to calculate the needed value in the question and `unnest` the result as well.
+
+## Making density plot of estimate
 
 Then, I would like to plot the r_squared distribution.
 
@@ -164,6 +168,8 @@ weather_q2_df |>
 
 From above graph, we can clearly see that it is a left-skewed distribution with a long tail on the left. And the center of this distribution is between -6 and -5.
 
+## 95% of Confidence Interval
+
 * Confidence interval of ${r^2}$ and $log(\hat{\beta_1} * \hat{\beta_2})$
 
 * Here comes the 95% CI of r_squared.
@@ -191,8 +197,9 @@ quantile(
 
 ```
 
-## Problem 3
+# Problem 3
 
+## Import data in Q3
 
 ```{r import_data_q3}
 
@@ -235,6 +242,8 @@ head(birthweight_df)
 ```
 
 First of all, I import the data into the environment and use the function `mutate` and `case_match` to update the value in the data. Then, I convert these variables into `factors`.
+
+## Building models
 
 ```{r building_linear_model}
 
@@ -299,9 +308,6 @@ summary(lm_q3_2)
 
 ```
 
-
-## Comparison
-
 ### Original Model
 
 ```{r original_model}
@@ -352,6 +358,8 @@ error_model2 = mean(errors_model2_df)
 ```
 
 We can use `crossv_mc` to split the data into k exclusive partitions and uses each partition for a test-training split. Then, I built three different models as requested in the question and computed their error.
+
+## Comparison
 
 ```{r comparison}
 
