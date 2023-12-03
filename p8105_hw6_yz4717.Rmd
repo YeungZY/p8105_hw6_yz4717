@@ -5,7 +5,7 @@ date: "2023-12-02"
 output: github_document
 ---
 
-```{r import_needed_packages}
+```{r import_needed_packages, message=FALSE}
 library(tidyverse)
 library(modelr)
 ```
@@ -147,7 +147,7 @@ weather_q2_df |>
 
 ```
 
-As can be seen from the above graph, the distribution is approximately normal, with the median of 0.917. 
+As can be seen from the above graph, the distribution is approximately normal with symmetric tails and the median of 0.917. 
 
 After that, I plot the distribution of ($log(\hat{\beta_1} * \hat{\beta_2})$)
 
@@ -162,6 +162,8 @@ weather_q2_df |>
 
 ```
 
+From above graph, we can clearly see that it is a left-skewed distribution with a long tail on the left. And the center of this distribution is between -6 and -5.
+
 * Confidence interval of ${r^2}$ and $log(\hat{\beta_1} * \hat{\beta_2})$
 
 * Here comes the 95% CI of r_squared.
@@ -171,7 +173,8 @@ weather_q2_df |>
 quantile(
   pull(weather_q2_df,
        r.squared),
-  probs = c(.025, .975))
+  probs = c(.025, .975)) |> 
+  knitr::kable(col.names = c("95% of CI"))
 
 ```
 
@@ -183,7 +186,8 @@ quantile(
   pull(weather_q2_df,
        log_data),
   probs = c(.025, .975),
-  na.rm = TRUE)
+  na.rm = TRUE) |> 
+  knitr::kable(col.names = c("95% of CI"))
 
 ```
 
